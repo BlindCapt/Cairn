@@ -1,0 +1,6 @@
+dist
+dev-dist
+coverage
+package-lock.json
+src/types/database.ts
+supabase/migrations

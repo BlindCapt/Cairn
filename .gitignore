@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dev-dist/
+*.tsbuildinfo
+
+# Environment (keep only the example)
+.env*
+!.env.example
+
+# Supabase local state
+.supabase/
+supabase/.temp/
+supabase/.branches/
+
+# Claude Code local files
+.claude/settings.local.json
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editors
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
