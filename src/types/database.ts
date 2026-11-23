@@ -3,8 +3,8 @@
  *
  * This file is generated, do not edit it by hand. Regenerate it after every migration:
  *   1. Log in once: `npx supabase login`
- *   2. Replace YOUR_PROJECT_ID in the `db:types` script of package.json with your
- *      project ref (Supabase dashboard > Project Settings > General > Project ID)
+ *   2. Make sure the `db:types` script of package.json uses your project ref
+ *      (Supabase dashboard > Project Settings > General > Project ID)
  *   3. Run `npm run db:types`
  */
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];

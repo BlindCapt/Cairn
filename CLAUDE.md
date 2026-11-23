@@ -26,7 +26,7 @@ L'utilisateur compose ses journées à partir d'une bibliothèque d'items et de 
 
 React + Vite + TypeScript strict, `vite-plugin-pwa`, `react-router`, Supabase (Postgres + Auth lien magique), CSS Modules, ESLint + Prettier, Vitest + Testing Library. npm, Node `^22.22.2 || >=24.15`.
 
-`npm run dev` · `build` · `preview` · `lint` · `format` · `typecheck` · `test` · `db:types` (remplacer `YOUR_PROJECT_ID` dans `package.json`).
+`npm run dev` · `build` · `preview` · `lint` · `format` · `typecheck` · `test` · `db:types` (utilise l'ID du projet Supabase défini dans `package.json` ; `npx supabase login` la première fois).
 
 ## Architecture
 
@@ -38,9 +38,19 @@ React + Vite + TypeScript strict, `vite-plugin-pwa`, `react-router`, Supabase (P
 
 ## Modèle de données
 
-> TODO : `supabase/migrations/0001_init.sql` n'était pas dans le dépôt au moment du setup. Compléter cette section en lisant la migration.
+Source : `supabase/migrations/0001_init.sql`. Toutes les tables ont `user_id` (défaut `auth.uid()`) et la RLS « own rows ». Les clés étrangères composites `(id, user_id)` empêchent de relier les données de deux utilisateurs.
 
-Tables : `items`, `day_profiles`, `profile_items` (réglages par profil), `week_schedule`, `profile_overrides`, `item_checks`, `block_sessions`, `captures`. Fonction `return_overdue_captures(today date)`.
+- `items` : bibliothèque. `type` (`task` | `block`), `duration_min` (blocs seulement), `note_fields text[]` (vide = validation simple, sinon intitulés des champs de note), `archived_at`.
+- `day_profiles` : `name`, `color` (hex), `position`.
+- `profile_items` : lien profil ↔ item avec réglages propres au profil : `level` (`minimum` | `bonus`), `position`, `cue` (repère). Unique `(profile_id, item_id)`.
+- `week_schedule` : un profil par `weekday` (1 = lundi … 7 = dimanche, ISO).
+- `profile_overrides` (v0.2) : profil forcé pour un `day`, `source` (`profiles` | `pill`).
+- `item_checks` : tâche cochée pour un `day` (unique item + jour), `note jsonb`.
+- `block_sessions` : une session par bloc et par jour. `status` (`todo` | `running` | `paused` | `done`), `elapsed_seconds` + `resumed_at` (temps écoulé = `elapsed_seconds + (now() - resumed_at)` si `running`), `note`. Un seul bloc `running` à la fois par utilisateur.
+- `captures` : `text`, `status` (`inbox` | `planned` | `done` | `archived`), `planned_date` (obligatoire si et seulement si `planned`), `returned` + `original_date` (tâche revenue car non faite).
+- Notes (`note jsonb`) : copie figée `[{ "label": "...", "value": "..." }]`, pour que l'historique reste lisible si les champs de l'item changent.
+- `return_overdue_captures(today date) → integer` : repasse en `inbox` les captures `planned` avant `today`. À appeler à l'ouverture de l'app avec la date locale.
+- `updated_at` est maintenu par le trigger `set_updated_at()`.
 
 ## Règles Supabase
 

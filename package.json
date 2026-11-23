@@ -14,7 +14,7 @@
     "format": "prettier --write .",
     "typecheck": "tsc -b --noEmit",
     "test": "vitest run",
-    "db:types": "supabase gen types typescript --project-id YOUR_PROJECT_ID --schema public > src/types/database.ts"
+    "db:types": "supabase gen types typescript --project-id mrucbrgxlhovcwovmgwf --schema public > src/types/database.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.2",
